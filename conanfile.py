@@ -59,7 +59,7 @@ class Libf2cConan(ConanFile):
                     self._targets.append("libf2c.a")
 
             if self.settings.os == "Windows":
-                    self.run("nmake -f makefile.vc")
+                self.run("nmake -f makefile.vc")
             else:
                 self.run("%s arch=%s %s %s" % (make, arch, extra, " ".join(self._targets)))
 
