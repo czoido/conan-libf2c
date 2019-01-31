@@ -6,7 +6,7 @@ class Libf2cConan(ConanFile):
     name = "libf2c"
     version = "20181026"
     license = "HPND"
-    url = "http://www.netlib.org/f2c/"
+    url = "https://github.com/czoido/conan-libf2c"
     homepage = "https://www.netlib.org/f2c/"
     description = "libf2c is a library to convert Fortran 77 to C code."
     topics = ("fortran","algebra","matrix")
