@@ -39,7 +39,6 @@ class Libf2cConan(ConanFile):
         if not make:
             raise Exception("This package needs 'make' in the path to build")
 
-        print(self._source_subfolder)
         with tools.chdir(self._source_subfolder):
             os.rename("makefile.u","Makefile")
             if self.options.fPIC:
