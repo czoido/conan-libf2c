@@ -41,7 +41,6 @@ class Libf2cConan(ConanFile):
 
         print(self._source_subfolder)
         with tools.chdir(self._source_subfolder):
-            print("COMPILIIIING")
             os.rename("makefile.u","Makefile")
             if self.options.fPIC:
                 tools.replace_in_file("Makefile", "CFLAGS = -O","CFLAGS = -O -fPIC")
