@@ -30,11 +30,8 @@ class Libf2cConan(ConanFile):
                   destination=self._source_subfolder)
 
     def build(self):
-        def add_flag(name, value):
-            if name in os.environ:
-                os.environ[name] += ' ' + value
-            else:
-                os.environ[name] = value
+        def add_cflag(value):
+            tools.replace_in_file("Makefile", "CFLAGS = ", "CFLAGS = %s " % value)
 
         arch = self.settings.arch
         extra = ""
@@ -44,9 +41,11 @@ class Libf2cConan(ConanFile):
 
         with tools.chdir(self._source_subfolder):
             os.rename("makefile.u", "Makefile")
-            if self.options.fPIC:
-                tools.replace_in_file("Makefile", "CFLAGS = -O", "CFLAGS = -O -fPIC")
-                # add_flag('CFLAGS', '-fPIC')
+            if self.settings.os == "Linux":
+                add_cflag('-DNON_UNIX_STDIO')
+
+            if self.options.fPIC or self.options.shared:
+                add_cflag('-fPIC')
 
             if self.settings.os == "Macos":
                 if self.options.shared:
