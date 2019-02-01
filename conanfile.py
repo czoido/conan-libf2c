@@ -1,4 +1,5 @@
 import os
+
 from conans import ConanFile, tools
 
 
@@ -9,7 +10,7 @@ class Libf2cConan(ConanFile):
     url = "https://github.com/czoido/conan-libf2c"
     homepage = "https://www.netlib.org/f2c/"
     description = "libf2c is a library to convert Fortran 77 to C code."
-    topics = ("fortran","algebra","matrix")
+    topics = ("fortran", "algebra", "matrix")
     generators = "cmake"
 
     settings = "os", "compiler", "build_type", "arch"
@@ -24,8 +25,10 @@ class Libf2cConan(ConanFile):
             del self.options.shared
 
     def source(self):
-        tools.get("http://www.netlib.org/f2c/libf2c.zip",sha256="ca404070e9ce0a9aaa6a71fc7d5489d014ade952c5d6de7efb88de8e24f2e8e0",destination=self._source_subfolder)
-        
+        tools.get("http://www.netlib.org/f2c/libf2c.zip",
+                  sha256="ca404070e9ce0a9aaa6a71fc7d5489d014ade952c5d6de7efb88de8e24f2e8e0",
+                  destination=self._source_subfolder)
+
     def build(self):
         def add_flag(name, value):
             if name in os.environ:
@@ -40,15 +43,16 @@ class Libf2cConan(ConanFile):
             raise Exception("This package needs 'make' in the path to build")
 
         with tools.chdir(self._source_subfolder):
-            os.rename("makefile.u","Makefile")
+            os.rename("makefile.u", "Makefile")
             if self.options.fPIC:
-                tools.replace_in_file("Makefile", "CFLAGS = -O","CFLAGS = -O -fPIC")
-                #add_flag('CFLAGS', '-fPIC')
+                tools.replace_in_file("Makefile", "CFLAGS = -O", "CFLAGS = -O -fPIC")
+                # add_flag('CFLAGS', '-fPIC')
 
             if self.settings.os == "Macos":
                 if self.options.shared:
-                    tools.replace_in_file("Makefile", "libf2c.so: $(OFILES)","libf2c.dylib: $(OFILES)")
-                    tools.replace_in_file("Makefile", "$(CC) -shared -o libf2c.so $(OFILES)","$(CC) -dynamiclib -all_load -headerpad_max_install_names -undefined dynamic_lookup -single_module -o libf2c.dylib $(OFILES)")
+                    tools.replace_in_file("Makefile", "libf2c.so: $(OFILES)", "libf2c.dylib: $(OFILES)")
+                    tools.replace_in_file("Makefile", "$(CC) -shared -o libf2c.so $(OFILES)",
+                                          "$(CC) -dynamiclib -all_load -headerpad_max_install_names -undefined dynamic_lookup -single_module -o libf2c.dylib $(OFILES)")
                     self._targets.append("libf2c.dylib")
                 else:
                     self._targets.append("libf2c.a")

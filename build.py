@@ -1,5 +1,3 @@
-import os, sys
-import platform
 from cpt.packager import ConanMultiPackager
 
 if __name__ == "__main__":

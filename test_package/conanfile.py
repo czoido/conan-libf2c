@@ -6,7 +6,6 @@ from conans import ConanFile, CMake, tools
 class Libf2cTestConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     generators = "cmake"
-    #default_options = {"libf2c:shared": False}
 
     def build(self):
         cmake = CMake(self)
