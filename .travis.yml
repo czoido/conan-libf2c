@@ -1,0 +1,34 @@
+
+env:
+   global:
+     - CONAN_REFERENCE: "libf2c/20181026"
+     - CONAN_USERNAME: "czoido"
+     - CONAN_LOGIN_USERNAME: "czoido"
+     - CONAN_CHANNEL: "stable"
+     - CONAN_UPLOAD: "https://api.bintray.com/conan/czoido/conan-packages"
+
+linux: &linux
+   os: linux
+   dist: xenial
+   sudo: required
+   language: python
+   python: "3.6"
+   services:
+     - docker
+osx: &osx
+   os: osx
+   language: generic
+matrix:
+   include:
+    
+      - <<: *osx
+        osx_image: xcode10
+        env: CONAN_APPLE_CLANG_VERSIONS=10.0
+
+install:
+  - chmod +x .travis/install.sh
+  - ./.travis/install.sh
+
+script:
+  - chmod +x .travis/run.sh
+  - ./.travis/run.sh
