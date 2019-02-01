@@ -68,6 +68,7 @@ class Libf2cConan(ConanFile):
                 self.run("%s arch=%s %s %s" % (make, arch, extra, " ".join(self._targets)))
 
     def package(self):
+        self.copy("Notice", dst="licenses", src=self._source_subfolder)
         self.copy("f2c.h", dst="include", src=self._source_subfolder)
         self.copy("*.dylib", dst="lib", keep_path=False)
         self.copy("*.a", dst="lib", keep_path=False)
