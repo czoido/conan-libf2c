@@ -30,9 +30,9 @@ class Libf2cConan(ConanFile):
             tools.replace_in_file("Makefile", "CFLAGS = ", "CFLAGS = %s " % value)
 
         arch = self.settings.arch
-        make = tools.get_env("CONAN_MAKE_PROGRAM", tools.which("make") or tools.which('mingw32-make'))
+        make = tools.get_env("CONAN_MAKE_PROGRAM", tools.which("make") or tools.which('nmake'))
         if not make:
-            raise Exception("This package needs 'make' in the path to build")
+            raise Exception("This package needs 'make' in Linux/Macos or 'nmake' in Windows in the path to build")
 
         if self.settings.os == "Windows":
             if self.options.shared:
