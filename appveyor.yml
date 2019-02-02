@@ -7,7 +7,6 @@ environment:
     CONAN_USERNAME: "czoido"
     CONAN_LOGIN_USERNAME: "czoido"
     CONAN_CHANNEL: "stable"
-    CONAN_UPLOAD: "https://api.bintray.com/conan/czoido/conan-packages"
 
     matrix:
         - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
