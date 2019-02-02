@@ -4,10 +4,11 @@ environment:
     PYTHON: "C:\\Python37"
 
     CONAN_REFERENCE: "libf2c/20181026"
-    CONAN_USERNAME: "myuser"
-    CONAN_LOGIN_USERNAME: "myuser"
+    CONAN_USERNAME: "czoido"
+    CONAN_LOGIN_USERNAME: "czoido"
     CONAN_CHANNEL: "stable"
-    
+    CONAN_UPLOAD: "https://api.bintray.com/conan/czoido/conan-packages"
+
     matrix:
         - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
           CONAN_VISUAL_VERSIONS: 12

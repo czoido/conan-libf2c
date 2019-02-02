@@ -109,4 +109,5 @@ int main() {
     integer inc = 1;
     doublereal gs = ddot_(&n, g, &inc, s, &inc);
     printf("result: %f",gs);
+    return 0;
 }
