@@ -20,10 +20,6 @@ class Libf2cConan(ConanFile):
     _source_subfolder = "libf2c_sources"
     _targets = ["hadd", "f2c.h", "signal1.h", "sysdep1.h"]
 
-    def config_options(self):
-        if self.settings.os == "Windows":
-            del self.options.shared
-
     def source(self):
         tools.get("http://www.netlib.org/f2c/libf2c.zip",
                   sha256="ca404070e9ce0a9aaa6a71fc7d5489d014ade952c5d6de7efb88de8e24f2e8e0",
@@ -34,21 +30,25 @@ class Libf2cConan(ConanFile):
             tools.replace_in_file("Makefile", "CFLAGS = ", "CFLAGS = %s " % value)
 
         arch = self.settings.arch
-        extra = ""
         make = tools.get_env("CONAN_MAKE_PROGRAM", tools.which("make") or tools.which('mingw32-make'))
         if not make:
             raise Exception("This package needs 'make' in the path to build")
 
+        if self.settings.os == "Windows":
+            if self.options.shared:
+                self.output.warn("shared option is disabled for Windows. Setting to false")
+                self.options.shared = False
+
         with tools.chdir(self._source_subfolder):
             os.rename("makefile.u", "Makefile")
-            if self.settings.os == "Linux":
-                add_cflag('-DNON_UNIX_STDIO')
 
             if self.options.fPIC or self.options.shared:
                 add_cflag('-fPIC')
 
             if self.settings.os == "Macos":
                 if self.options.shared:
+                    # create the dynamic library; undefined dynamic lookup is needed
+                    # because the runtime will call Fortran _MAIN__                    
                     tools.replace_in_file("Makefile", "libf2c.so: $(OFILES)", "libf2c.dylib: $(OFILES)")
                     tools.replace_in_file("Makefile", "$(CC) -shared -o libf2c.so $(OFILES)",
                                           "$(CC) -dynamiclib -all_load -headerpad_max_install_names -undefined dynamic_lookup -single_module -o libf2c.dylib $(OFILES)")
@@ -56,6 +56,7 @@ class Libf2cConan(ConanFile):
                 else:
                     self._targets.append("libf2c.a")
             elif self.settings.os == "Linux":
+                add_cflag('-DNON_UNIX_STDIO')
                 if self.options.shared:
                     self._targets.append("libf2c.so")
                 else:
@@ -64,7 +65,7 @@ class Libf2cConan(ConanFile):
             if self.settings.os == "Windows":
                 self.run("nmake -f makefile.vc")
             else:
-                self.run("%s arch=%s %s %s" % (make, arch, extra, " ".join(self._targets)))
+                self.run("%s arch=%s %s" % (make, arch, " ".join(self._targets)))
 
     def package(self):
         self.copy("Notice", dst="licenses", src=self._source_subfolder)

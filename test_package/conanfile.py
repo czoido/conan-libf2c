@@ -9,6 +9,9 @@ class Libf2cTestConan(ConanFile):
 
     def build(self):
         cmake = CMake(self)
+        # because the runtime will call Fortran _MAIN__     
+        if self.settings.os == "Linux" and self.settings.compiler == "clang" and self.options["libf2c"].shared:
+            cmake.definitions["CMAKE_CXX_FLAGS"] = "-Wl,--undefined=MAIN__"
         cmake.configure()
         cmake.build()
 
