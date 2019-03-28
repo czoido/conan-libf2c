@@ -30,9 +30,16 @@ class Libf2cConan(ConanFile):
             tools.replace_in_file("Makefile", "CFLAGS = ", "CFLAGS = %s " % value)
 
         arch = self.settings.arch
-        make = tools.get_env("CONAN_MAKE_PROGRAM", tools.which("make") or tools.which('nmake'))
-        if not make:
-            raise Exception("This package needs 'make' in Linux/Macos or 'nmake' in Windows in the path to build")
+        if self.settings.os == "Windows":
+            with (tools.vcvars(self.settings)):
+                nmake = tools.which('nmake')
+                if not nmake:
+                    raise Exception("This package needs 'nmake' in Windows in the path to build")
+        else:
+            make = tools.get_env("CONAN_MAKE_PROGRAM", tools.which("make") or tools.which('nmake'))
+            if not make:
+                raise Exception("This package needs 'make' in Linux/Macos in the path to build")
+
 
         if self.settings.os == "Windows":
             if self.options.shared:
@@ -63,7 +70,9 @@ class Libf2cConan(ConanFile):
                     self._targets.append("libf2c.a")
 
             if self.settings.os == "Windows":
-                self.run("nmake -f makefile.vc")
+                vcvars = tools.vcvars_command(self.settings)
+                build_command = "nmake -f makefile.vc"
+                self.run("%s && %s" % (vcvars, build_command))
             else:
                 self.run("%s arch=%s %s" % (make, arch, " ".join(self._targets)))
 
